@@ -40,7 +40,7 @@
 
 
 # MCU name
-MCU = atmega32
+MCU = atmega324pa
 #MCU = attiny13
 
 
@@ -207,7 +207,6 @@ AVRDUDE_PROGRAMMER = usbtiny
 #AVRDUDE_PORT = COM1
 
 AVRDUDE_WRITE_FLASH = -U flash:w:$(TARGET).hex
-#AVRDUDE_WRITE_EEPROM = -U eeprom:w:$(TARGET).eep
 
 
 # Uncomment the following if you want avrdude's erase cycle counter.
@@ -224,7 +223,7 @@ AVRDUDE_WRITE_FLASH = -U flash:w:$(TARGET).hex
 # to submit bug reports.
 #AVRDUDE_VERBOSE = -v -v
 
-AVRDUDE_FLAGS = -p $(MCU) -P $(AVRDUDE_PORT) -c $(AVRDUDE_PROGRAMMER)
+AVRDUDE_FLAGS = -c $(AVRDUDE_PROGRAMMER) -p $(MCU) -B 1
 AVRDUDE_FLAGS += $(AVRDUDE_NO_VERIFY)
 AVRDUDE_FLAGS += $(AVRDUDE_VERBOSE)
 AVRDUDE_FLAGS += $(AVRDUDE_ERASE_COUNTER)
@@ -320,11 +319,10 @@ ALL_ASFLAGS = -mmcu=$(MCU) -I. -x assembler-with-cpp $(ASFLAGS)
 # Default target.
 all: begin gccversion sizebefore build sizeafter end
 
-build: elf hex eep lss sym
+build: elf hex lss sym
 
 elf: $(TARGET).elf
 hex: $(TARGET).hex
-eep: $(TARGET).eep
 lss: $(TARGET).lss 
 sym: $(TARGET).sym
 
@@ -364,8 +362,8 @@ gccversion :
 
 
 # Program the device.  
-program: $(TARGET).hex $(TARGET).eep
-	$(AVRDUDE) $(AVRDUDE_FLAGS) $(AVRDUDE_WRITE_FLASH) $(AVRDUDE_WRITE_EEPROM)
+program: $(TARGET).hex 
+	$(AVRDUDE) $(AVRDUDE_FLAGS) $(AVRDUDE_WRITE_FLASH)
 
 
 # Generate avr-gdb config/init file which does the following:
@@ -404,7 +402,6 @@ COFFCONVERT=$(OBJCOPY) --debugging \
 --change-section-address .data-0x800000 \
 --change-section-address .bss-0x800000 \
 --change-section-address .noinit-0x800000 \
---change-section-address .eeprom-0x810000 
 
 
 coff: $(TARGET).elf
@@ -485,7 +482,6 @@ clean_list :
 	@echo
 	@echo $(MSG_CLEANING)
 	$(REMOVE) $(TARGET).hex
-	$(REMOVE) $(TARGET).eep
 	$(REMOVE) $(TARGET).cof
 	$(REMOVE) $(TARGET).elf
 	$(REMOVE) $(TARGET).map
@@ -507,8 +503,4 @@ clean_list :
 .PHONY : all begin finish end sizebefore sizeafter gccversion \
 build elf hex eep lss sym coff extcoff \
 clean clean_list program debug gdb-config
-
-install:
-	avrdude -c usbtiny -p m32 -B 1 -U flash:w:main.hex
-	avrdude -c usbtiny -p m32 -B 1 -U eeprom:w:main.eep
 
