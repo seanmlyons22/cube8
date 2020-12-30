@@ -100,3 +100,66 @@ It can be built with make and is useful for debugging dead LEDs or broken
 connections within the cube.
 
 
+Hardware Design
+===============
+
+In order to reduce the number of ICs and IOs needed by the LED cube, the latch
+board will be replaced by a CPLD. The CPLD selected was an Altera (now Intel)
+Max II device. It will serve as an IO expander and perform all the logic that
+the multiplexer board in the original design did.
+
+
+Source and project files for the CPLD are found in the `hdl` folder.
+Since CPLD development is only supported under Linux, I used a VM. The VM is
+managed and provisioned using the following software
+
+ - VirtualBox
+ - Vagrant
+ - Ansible
+
+Prerequisites
+-------------
+
+The following steps are needed to setup the host machine:
+
+ 1. Install [virtualbox](https://www.virtualbox.org/wiki/Downloads)
+ 1. On macOS make sure to give proper permissions:
+
+   - settings > security & privacy > privacy > Accessibility
+   - settings > security & privacy > privacy > Input Monitoring
+
+   Note: when first installing virtualbox there will be a popup asking to give
+   it permissions, this can be found at settings > security & privacy > general
+   **Make sure this succeeds**, virtualbox will not work without it
+
+ 1. Install vagrant using homebrew `brew install --cask vagrant`
+
+
+Running VM
+----------
+
+The VM can be accessed using the following commands:
+
+ 1. `vagrant up`
+ 1. `vagrant ssh`
+ 1. (in VM terminal) `sudo startx`
+
+  - This starts the graphical environment
+ 1. Quartus can be run by executing `/opt/intelFPGA/quartus/bin/quartus`
+
+
+On the first run, vagrant up can take quite a long time. This is because
+Ansible is provisioning the machine. This includes installing quartus and all
+its dependencies. Special thanks to
+[Embida](https://github.com/Embida/quartus-docker/blob/master/playbook.yml),
+whose playbook I copied from to get started.
+
+
+
+Why Vagrant?
+------------
+
+USB support. Docker is a great tool for many projects, but on macOS hosts,
+Vagrant offers much more seamless USB support. USB is needed to control the
+USB Blaster that programs the CPLD.
+

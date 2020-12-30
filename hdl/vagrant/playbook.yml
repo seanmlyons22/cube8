@@ -1,0 +1,73 @@
+---
+- hosts: all
+  remote_user: vagrant
+  become: yes
+  vars:
+    install_dir: /opt/intelFPGA
+    download_dir: /tmp/ansible
+    path_append: ":/opt/intelFPGA/quartus/bin"
+
+
+  tasks:
+  - name: Add to paths environment
+    shell: 'echo "PATH=$PATH{{ path_append }}" > /etc/environment'
+
+  - name: Add to paths root .bashrc
+    shell: 'echo "export PATH=$PATH{{ path_append }}" >> /root/.bashrc'
+
+  - name: Check if libpng12-0 is installed
+    command: dpkg-query -W libpng12-0
+    register: my_package_check_deb
+    failed_when: my_package_check_deb.rc > 1
+    changed_when: my_package_check_deb.rc == 1
+
+  - name: Download libpng12-0
+    get_url:
+      url: "http://security.ubuntu.com/ubuntu/pool/main/libp/libpng/libpng12-0_1.2.54-1ubuntu1.1_amd64.deb"
+      dest: "/tmp/libpng12-0_1.2.54-1ubuntu1.1_amd64.deb"
+    when: my_package_check_deb.rc == 1
+
+  - name: Install libpng12-0
+    apt: deb="/tmp/libpng12-0_1.2.54-1ubuntu1.1_amd64.deb"
+    become: true
+    when: my_package_check_deb.rc == 1
+
+  - name: Check if Quartus is installed
+    stat:
+      path: "{{ install_dir }}/quartus/bin/quartus_sh"
+    register: quartus_binary
+
+  - name: Create unpack directory
+    file:
+      path: "{{download_dir}}/quartus"
+      state: directory
+      recurse: yes
+      mode: "u=rw,g=wx,o=rwx"
+    when: quartus_binary.stat.exists == False
+
+  - name: Download Quartus
+    get_url:
+      dest: "{{download_dir}}"
+      url: http://download.altera.com/akdlm/software/acdsinst/18.1std/625/ib_tar/Quartus-lite-18.1.0.625-linux.tar
+    when: quartus_binary.stat.exists == False
+
+  - name: Unarchive Quartus
+    unarchive:
+      src:  "{{download_dir}}/Quartus-lite-18.1.0.625-linux.tar"
+      dest: "{{download_dir}}/quartus/"
+    when: quartus_binary.stat.exists == False
+
+  - name: Install Quartus
+    command: "{{download_dir}}/quartus/setup.sh --mode unattended --accept_eula 1 --installdir {{install_dir}} --disable-components quartus_help,quartus_update,modelsim_ase,modelsim_ae,arria_lite"
+    when: quartus_binary.stat.exists == False
+
+  - name: Clean up Quartus files
+    file:
+      path: "{{download_dir}}"
+      state: absent
+    when: quartus_binary.stat.exists == False
+
+  - name: Clean up large files
+    file:
+      path: "{{download_dir}}"
+      state: absent

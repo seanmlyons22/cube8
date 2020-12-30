@@ -1,4 +1,6 @@
 .dep/
+hdl/vagrant/.vagrant/
+**playbook.retry
 *.o
 *.map
 *.lst
@@ -8,3 +10,4 @@
 *.elf
 *.hex
 *.DS_Store
+
