@@ -82,27 +82,85 @@ void io_init()
 
     ADDRESS_BUS = 0x00;   // Flip flops enabled, address = 0
 
-    // clear profiling IO
-    PORTD &= 0xFB; 
+    // Profile delay function, set IO to 0
+    PORTD &= ~(0x04);
 }
 
 int main(void)
 {
     io_init();
 
+    /***************************************************************************
+     * Delay profiling
+     * the purpose of the following code is to measure the delay_ms function
+     * used in the original LED cube by measuring its duration for some various
+     * inputs. The measurement is done by toggling a GPIO at the beginning and
+     * end of the function.
+     *
+     * This is done so that we can understand the delay in terms of microseconds
+     * so that the cube can be easily ported to other microcontrollers
+     */
     // Profile delay function, set IO to 1
-    PORTD |= 0x04; 
+    PORTD |= 0x04;
     delay_ms(1);
     // Profile delay function, set IO to 0
-    PORTD &= ~(0x04); 
+    PORTD &= ~(0x04);
+
+    _delay_ms(1);
+
+
+    // Profile delay function, set IO to 1
+    PORTD |= 0x04;
+    delay_ms(2);
+    // Profile delay function, set IO to 0
+    PORTD &= ~(0x04);
+
+    _delay_ms(1);
+
+
+    // Profile delay function, set IO to 1
+    PORTD |= 0x04;
+    delay_ms(3);
+    // Profile delay function, set IO to 0
+    PORTD &= ~(0x04);
+
+    _delay_ms(1);
+
+
+
+    // Profile delay function, set IO to 1
+    PORTD |= 0x04;
+    delay_ms(11);
+    // Profile delay function, set IO to 0
+    PORTD &= ~(0x04);
+
+    _delay_ms(1);
+
+
+    // Profile delay function, set IO to 1
+    PORTD |= 0x04;
+    delay_ms(100);
+    // Profile delay function, set IO to 0
+    PORTD &= ~(0x04);
+
+    _delay_ms(1);
+
+
+    // Profile delay function, set IO to 1
+    PORTD |= 0x04;
+    delay_ms(1000);
+    // Profile delay function, set IO to 0
+    PORTD &= ~(0x04);
+
+    _delay_ms(1);
 
     timer_init();
     current_layer = 0;
     sei();
 
-
     while(1)
     {
+
         // Update layer, protect for atomic access
         cli();
         current_layer++;
