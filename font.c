@@ -67,10 +67,10 @@ void font_getpath (unsigned char path, unsigned char *destination, int length)
 {
     int i;
     int offset = 0;
-    
+
     if (path == 1)
         offset=28;
-    
+
     for (i = 0; i < length; i++)
         destination[i] = pgm_read_byte(&paths[i+offset]);
 }
@@ -79,7 +79,7 @@ void font_getchar (char chr, unsigned char dst[5])
 {
     uint8_t i;
     chr -= 32; // our bitmap font starts at ascii char 32.
-    
+
     for (i = 0; i < 5; i++)
         dst[i] = (unsigned char)eeprom_read_byte((uint8_t*)&font[(chr*5)+i]);
 }
@@ -87,10 +87,10 @@ void font_getchar (char chr, unsigned char dst[5])
 void font_getbitmap (char bitmap, unsigned char dst[8])
 {
     int i;
-    
+
     for (i = 0; i < 8; i++)
         dst[i] = (unsigned char)eeprom_read_byte((uint8_t*)&bitmaps[(uint8_t)bitmap][(uint8_t)i]);
-    
+
 }
 
 unsigned char font_getbitmappixel ( char bitmap, char x, char y)

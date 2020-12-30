@@ -22,20 +22,20 @@
 void gol_play (int iterations, uint16_t delay)
 {
     int i;
-    
+
     for (i = 0; i < iterations; i++)
     {
         LED_PORT ^= LED_GREEN;
-    
+
         gol_nextgen();
-        
+
         if (gol_count_changes() == 0)
             return;
-        
+
         tmp2cube();
-        
+
         delay_ms(delay);
-        
+
         //led_red(1);
     }
 }
@@ -44,9 +44,9 @@ void gol_nextgen (void)
 {
     int x,y,z;
     unsigned char neigh;
-    
+
     tmpfill(0x00);
-    
+
     for (x = 0; x < GOL_X; x++)
     {
         for (y = 0; y < GOL_Y; y++)
@@ -54,7 +54,7 @@ void gol_nextgen (void)
             for (z = 0; z < GOL_Z; z++)
             {
                 neigh = gol_count_neighbors(x, y, z);
-                
+
                 // Current voxel is alive.
                 if (getvoxel(x,y,z) == 0x01)
                 {
@@ -83,9 +83,9 @@ unsigned char gol_count_neighbors (int x, int y, int z)
 {
     int ix, iy, iz; // offset 1 in each direction in each dimension
     int nx, ny, nz; // neighbours address.
-    
+
     unsigned char neigh = 0; // number of alive neighbours.
-    
+
     for (ix = -1; ix < 2; ix++)
     {
         for (iy = -1; iy < 2; iy++)
@@ -106,7 +106,7 @@ unsigned char gol_count_neighbors (int x, int y, int z)
                         ny = y+iy;
                         nz = z+iz;
                     }
-                    
+
                     if ( getvoxel(nx, ny, nz) )
                         neigh++;
                 }
@@ -120,7 +120,7 @@ int gol_count_changes (void)
 {
     int x,y;
     int i = 0;
-    
+
     for (x = 0; x < GOL_X; x++)
     {
         for (y = 0; y < GOL_Y; y++)
@@ -129,7 +129,7 @@ int gol_count_changes (void)
                 i++;
         }
     }
-    
+
     return i;
 }
 

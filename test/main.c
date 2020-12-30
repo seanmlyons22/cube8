@@ -9,21 +9,21 @@
  */
 
 // This must be defined before delay is included
-#define F_CPU 14745600UL 
+#define F_CPU 14745600UL
 
 #include <avr/io.h>
 #include <util/delay.h>
 #include <avr/interrupt.h>
 
 
-#define LAYER_SELECT PORTC 
+#define LAYER_SELECT PORTC
 #define ADDRESS_BUS PORTB
 #define ADDRESS_MASK 0x07
 #define ADDRESS_MASK_INV 0xF8
-#define DATA_BUS PORTA 
+#define DATA_BUS PORTA
 #define OE_MASK 0x08
 #define OE_ENABLE() PORTB &= ~OE_MASK
-#define OE_DISABLE() PORTB |= OE_MASK 
+#define OE_DISABLE() PORTB |= OE_MASK
 
 // Global Variables
 volatile uint8_t current_layer;
@@ -39,7 +39,24 @@ void my_delay_ms(uint16_t num_delay)
     {
         _delay_ms(10);
     }
-    
+
+}
+
+// Delay loop.
+// This is not calibrated to milliseconds,
+// but we had allready made to many effects using this
+// calibration when we figured it might be a good idea
+// to calibrate it.
+void delay_ms(uint16_t x)
+{
+  uint8_t y, z;
+  for ( ; x > 0 ; x--){
+    for ( y = 0 ; y < 90 ; y++){
+      for ( z = 0 ; z < 6 ; z++){
+        asm volatile ("nop");
+      }
+    }
+  }
 }
 
 void timer_init()
@@ -64,11 +81,21 @@ void io_init()
     DDRD |= 0x1C;   // PORT D[4:2] are outputs, LEDs
 
     ADDRESS_BUS = 0x00;   // Flip flops enabled, address = 0
+
+    // clear profiling IO
+    PORTD &= 0xFB; 
 }
 
 int main(void)
 {
     io_init();
+
+    // Profile delay function, set IO to 1
+    PORTD |= 0x04; 
+    delay_ms(1);
+    // Profile delay function, set IO to 0
+    PORTD &= ~(0x04); 
+
     timer_init();
     current_layer = 0;
     sei();

@@ -1,7 +1,7 @@
 LED Cube
 ========
 
-This readme explains how to setup the development environment for the LED cube. 
+This readme explains how to setup the development environment for the LED cube.
 Furthermore, it explains how to build and deploy binaries for the LED cube.
 
 Inspiration
@@ -12,10 +12,13 @@ This project is based on and inspired by `chr`'s
 project when I was a university student learning electronics. The intent was to
 copy `chr`'s work verbatim as I did not yet fully understand all the concepts.
 
-As a busy student, it took around 4 years to complete the build. This is 
-because I really only worked on it during school holidays. I learned a lot from  this project. It flexed by my theoretical and practical knowledge of embedded programming and electronics. 
+As a busy student, it took around 4 years to complete the build. This is
+because I really only worked on it during school holidays.
+I learned a lot from  this project.
+It flexed by my theoretical and practical knowledge of embedded programming and
+electronics.
 
-Now, I hope to give back to the project by coming up with some interesting 
+Now, I hope to give back to the project by coming up with some interesting
 modifications and sharing them with the community.
 
 
@@ -36,7 +39,7 @@ for macOS, they should also easily be adaptable to Linux or (maybe) Windows.
 Hardware Modifications
 ----------------------
 
-Note that I have swapped out the `atmega32` for a `atmega324pa` since I already 
+Note that I have swapped out the `atmega32` for a `atmega324pa` since I already
 have one from a previous project.
 
 
@@ -44,7 +47,7 @@ Prerequisites
 -------------
 
 Since I am developing on a mac, I will use homebrew to install the dependencies
-needed to compile the AVR firmware and load binaries. 
+needed to compile the AVR firmware and load binaries.
 
 Two things are needed:
 
@@ -93,7 +96,7 @@ Test Program
 ------------
 
 There is a small program to test the LED cube in the `test` folder.
-It can be built with make and is useful for debugging dead LEDs or broken 
+It can be built with make and is useful for debugging dead LEDs or broken
 connections within the cube.
 
 

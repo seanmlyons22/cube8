@@ -159,7 +159,7 @@ void setplane_y (int y)
     {
         for (z=0;z<CUBE_SIZE;z++)
             cube[z][y] = 0xff;
-    } 
+    }
 }
 
 void clrplane_y (int y)
@@ -168,7 +168,7 @@ void clrplane_y (int y)
     if (y>=0 && y<CUBE_SIZE)
     {
         for (z=0;z<CUBE_SIZE;z++)
-            cube[z][y] = 0x00; 
+            cube[z][y] = 0x00;
     }
 }
 
@@ -179,7 +179,7 @@ void setplane (char axis, unsigned char i)
         case AXIS_X:
             setplane_x(i);
             break;
-        
+
        case AXIS_Y:
             setplane_y(i);
             break;
@@ -197,7 +197,7 @@ void clrplane (char axis, unsigned char i)
         case AXIS_X:
             clrplane_x(i);
             break;
-        
+
        case AXIS_Y:
             clrplane_y(i);
             break;
@@ -262,7 +262,7 @@ void box_walls(int x1, int y1, int z1, int x2, int y2, int z2)
 {
     int iy;
     int iz;
-    
+
     argorder(x1, x2, &x1, &x2);
     argorder(y1, y2, &y1, &y2);
     argorder(z1, z2, &z1, &z2);
@@ -270,7 +270,7 @@ void box_walls(int x1, int y1, int z1, int x2, int y2, int z2)
     for (iz=z1;iz<=z2;iz++)
     {
         for (iy=y1;iy<=y2;iy++)
-        {   
+        {
             if (iy == y1 || iy == y2 || iz == z1 || iz == z2)
             {
                 cube[iz][iy] = byteline(x1,x2);
@@ -349,7 +349,7 @@ char flipbyte (char byte)
 void line(int x1, int y1, int z1, int x2, int y2, int z2)
 {
     float xy;   // how many voxels do we move on the y axis for each step on the x axis
-    float xz;   // how many voxels do we move on the y axis for each step on the x axis 
+    float xz;   // how many voxels do we move on the y axis for each step on the x axis
     unsigned char x,y,z;
     unsigned char lasty,lastz;
 
@@ -363,7 +363,7 @@ void line(int x1, int y1, int z1, int x2, int y2, int z2)
         tmp = z2; z2 = z1; z1 = tmp;
     }
 
-    
+
     if (y1>y2)
     {
         xy = (float)(y1-y2)/(float)(x2-x1);
@@ -393,7 +393,7 @@ void line(int x1, int y1, int z1, int x2, int y2, int z2)
         z = (xz*(x-x1))+z1;
         setvoxel(x,y,z);
     }
-    
+
 }
 
 // Delay loop.
@@ -415,7 +415,7 @@ void delay_ms(uint16_t x)
 
 // Copies the contents of fb (temp cube buffer) into the rendering buffer
 void tmp2cube (void)
-{   
+{
     memcpy(cube, fb, 64); // copy the current cube into a buffer.
 }
 
@@ -437,9 +437,9 @@ void shift (char axis, int direction)
         } else
         {
             ii = (7-i);
-        }   
-    
-    
+        }
+
+
         for (x = 0; x < CUBE_SIZE; x++)
         {
             for (y = 0; y < CUBE_SIZE; y++)
@@ -451,19 +451,19 @@ void shift (char axis, int direction)
                 {
                     iii = ii-1;
                 }
-                
+
                 if (axis == AXIS_Z)
                 {
                     state = getvoxel(x,y,iii);
                     altervoxel(x,y,ii,state);
                 }
-                
+
                 if (axis == AXIS_Y)
                 {
                     state = getvoxel(x,iii,y);
                     altervoxel(x,ii,y,state);
                 }
-                
+
                 if (axis == AXIS_X)
                 {
                     state = getvoxel(iii,y,x);
@@ -472,25 +472,25 @@ void shift (char axis, int direction)
             }
         }
     }
-    
+
     if (direction == -1)
     {
         i = 7;
     } else
     {
         i = 0;
-    }   
-    
+    }
+
     for (x = 0; x < CUBE_SIZE; x++)
     {
         for (y = 0; y < CUBE_SIZE; y++)
         {
             if (axis == AXIS_Z)
                 clrvoxel(x,y,i);
-                
+
             if (axis == AXIS_Y)
                 clrvoxel(x,i,y);
-            
+
             if (axis == AXIS_X)
                 clrvoxel(i,y,x);
         }
@@ -529,7 +529,7 @@ void mirror_x (void)
     memcpy(buffer, cube, CUBE_BYTES); // copy the current cube into a buffer.
 
     fill(0x00);
-    
+
     for (z=0; z<CUBE_SIZE; z++)
     {
         for (y=0; y<CUBE_SIZE; y++)

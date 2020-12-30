@@ -32,7 +32,7 @@
 // Rs232 button on D5
 #define RS232_BTN 0x20
 // Main button on B4
-#define MAIN_BTN 0x10 
+#define MAIN_BTN 0x10
 
 void ioinit (void);
 void bootmsg (void);

@@ -16,10 +16,10 @@ int main (void)
     // This function initiates IO ports, timers, interrupts and
     // serial communications
     ioinit();
-    
+
     // This variable specifies which layer is currently being drawn by the
     // cube interrupt routine. We assign a value to it to make sure it's not >7.
-    current_layer = 1;  
+    current_layer = 1;
 
     int i;
 
@@ -33,7 +33,7 @@ int main (void)
         // Show the effects in a predefined order
         for (i=0; i<EFFECTS_TOTAL; i++)
             launch_effect(i);
-        
+
         // Show the effects in a random order.
         // Comment the two lines above and uncomment this
         // if you want the effects in a random order.
@@ -55,7 +55,6 @@ int main (void)
  * 6) Increment the current_layer variable, so the next layer is
  *    drawn the next time this function runs.
  */
-
 ISR(TIMER0_COMPA_vect)
 {
     int i;
@@ -85,15 +84,14 @@ ISR(TIMER0_COMPA_vect)
         current_layer = 0;
 }
 
-
 void ioinit (void)
 {
     DDRA = 0xFF;    // DATA bus output
     DDRB |= 0x0F;   // Lower nibble of B is output
     DDRC = 0xFF;    // Layer select output
     DDRD |= 0x1C;   // PD[4:2] are outputs, LEDs
-    
-    
+
+
     PORTA = 0x00; // Set data bus off
     PORTC = 0x00; // Set layer select off
     PORTB = 0x00; // Enable pull up on button.
@@ -109,136 +107,3 @@ void ioinit (void)
     TCNT0 = 0x00;   // initial counter value = 0;
     TIMSK0 |= (1 << OCIE0A); // Enable CTC interrupt
 }
-
-// Boot wait function
-// This function does 3 things:
-// 1) Delay startup of interrupt. I've had some problems with in circuit
-//    serial programming when the cube was running. I guess switching all
-//    those LEDs on and off generates some noise.
-// 2) Set a random random seed based on the delay between boot time and
-//    the time you press a button.
-// 3) Select mode of operation, autonomous or rs232 controlled.
-unsigned int bootwait (void)
-{
-    // All the LED_PORT... code blinks the red and green status LEDs.
-
-    unsigned int x = 0;
-    LED_PORT |= LED_GREEN;
-    while (1)
-    {
-        x++; // increment x by one.
-        srand(x); // use counter x as random seed
-        
-        delay_ms(1000);
-        LED_PORT &= ~LED_GREEN; // green off, red on
-        LED_PORT |= LED_RED;
-        
-        // Listen for button presses and return with the
-        // apropriate number.
-        if (!(PIND & RS232_BTN))
-            return 2;
-
-        if (!(PINB & MAIN_BTN))
-            return 1;
-        
-        delay_ms(1000);
-        LED_PORT &= ~LED_RED; // red off, green on
-        LED_PORT |= LED_GREEN;
-        
-        // Same as above. I do it twise because there are two delays
-        // in this loop, used for the red and green led blinking..
-        if (!(PIND & RS232_BTN))
-            return 2;
-
-        if (!(PINB & MAIN_BTN))
-            return 1;
-    }
-}
-
-// Take input from a computer and load it onto the cube buffer
-void rs232(void)
-{
-    int tempval;
-    int x = 0;
-    int y = 0;
-    int escape = 0;
-    
-    while (1)
-    {
-        // Switch state on red LED for debugging
-        // Should switch state every time the code
-        // is waiting for a byte to be received.
-        LED_PORT ^= LED_RED;
-
-        // Wait until a byte has been received
-        while ( !(UCSR0A & (1<<RXC0)) );
-
-        // Load the received byte from rs232 into a buffer.
-        tempval = UDR0;
-
-        // Uncommet this to echo data back to the computer
-        // for debugging purposes.
-        //UDR = tempval;
-
-        // Every time the cube receives a 0xff byte,
-        // it goes into sync escape mode.
-        // if a 0x00 byte is then received, the x and y counters
-        // are reset to 0. This way the x and y counters are
-        // always the same on the computer and in the cube.
-        // To send an 0xff byte, you have to send it twice!
-
-        // Go into sync escape mode
-        if (tempval == 0xff)
-        {
-            // Wait for the next byte
-             while ( !(UCSR0A & (1<<RXC0)) );
-             // Get the next byte
-             tempval = UDR0;
-
-             // Sync signal is received.
-             // Reset x and y counters to 0.
-             if (tempval == 0x00)
-             {
-                x = 0;
-                y = 0;
-                escape = 1;
-             }
-             // if no 0x00 byte is received, proceed with
-             // the byte we just received.
-        }
-
-        if (escape == 0)
-        {
-        // Load data into the current position in the buffer
-        fb[x][y] = tempval;
-
-            // Check if we have reached the limits of the buffer array.
-            if (y == 7)
-            {
-                if (x == 7)
-                {
-                    // All data is loaded. Reset both counters
-                    y = 0;
-                    x = 0;
-                    // Copy the data onto the cube.
-                    tmp2cube();
-                } else
-                {
-                    // A layer is loaded, reset y and increment x.
-                    x++;
-                    y = 0;
-                }
-            } else
-            {
-                // We are in the middle of loading a layer. increment y.
-                y++;
-            }
-    
-        } else
-        {
-            escape = 0;
-        }
-    }
-}
-
-

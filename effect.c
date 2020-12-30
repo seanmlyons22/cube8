@@ -27,11 +27,11 @@ void effect_stringfly2(char * str)
 {
     int x,y,i;
     unsigned char chr[5];
-    
+
     while (*str)
     {
         font_getchar(*str++, chr);
-        
+
         // Put a character on the back of the cube
         for (x = 0; x < 5; x++)
         {
@@ -43,7 +43,7 @@ void effect_stringfly2(char * str)
                 }
             }
         }
-        
+
         // Shift the entire contents of the cube forward by 6 steps
         // before placing the next character
         for (i = 0; i<6; i++)
@@ -58,7 +58,7 @@ void effect_stringfly2(char * str)
         delay_ms(1000);
         shift(AXIS_X,-1);
     }
-    
+
 }
 
 // Draw a plane on one axis and send it back and forth once.
@@ -71,7 +71,7 @@ void effect_planboing (int plane, int speed)
         setplane(plane, i);
         delay_ms(speed);
     }
-    
+
     for (i=7;i>=0;i--)
     {
         fill(0x00);
@@ -84,7 +84,7 @@ void effect_blinky2()
 {
     int i,r;
     fill(0x00);
-    
+
     for (r=0;r<2;r++)
     {
         i = 750;
@@ -92,24 +92,24 @@ void effect_blinky2()
         {
             fill(0x00);
             delay_ms(i);
-            
+
             fill(0xff);
             delay_ms(100);
-            
+
             i = i - (15+(1000/(i/10)));
         }
-        
+
         delay_ms(1000);
-        
+
         i = 750;
         while (i>0)
         {
             fill(0x00);
             delay_ms(751-i);
-            
+
             fill(0xff);
             delay_ms(100);
-            
+
             i = i - (15+(1000/(i/10)));
         }
     }
@@ -124,9 +124,9 @@ void effect_box_shrink_grow (int iterations, int rot, int flip, uint16_t delay)
         for (i=0;i<16;i++)
         {
             xyz = 7-i; // This reverses counter i between 0 and 7.
-            if (i > 7) 
+            if (i > 7)
                 xyz = i-8; // at i > 7, i 8-15 becomes xyz 0-7.
-            
+
             fill(0x00); delay_ms(1);
             cli(); // disable interrupts while the cube is being rotated
             box_wireframe(0,0,0,xyz,xyz,xyz);
@@ -139,7 +139,7 @@ void effect_box_shrink_grow (int iterations, int rot, int flip, uint16_t delay)
 
             if (rot == 2 || rot == 3)
                 mirror_x();
-            
+
             sei(); // enable interrupts
             delay_ms(delay);
             fill(0x00);
@@ -151,7 +151,7 @@ void effect_box_shrink_grow (int iterations, int rot, int flip, uint16_t delay)
 void effect_box_woopwoop (int delay, int grow)
 {
     int i,ii;
-    
+
     fill(0x00);
     for (i=0;i<4;i++)
     {
@@ -198,7 +198,7 @@ void sendplane_rand_z (unsigned char z, int delay, int wait)
     fill(0x00);
 
     setplane_z(z);
-    
+
     // Send voxels at random untill all 16 have crossed the cube.
     while(loop)
     {
@@ -209,7 +209,7 @@ void sendplane_rand_z (unsigned char z, int delay, int wait)
             // Send the voxel flying
             sendvoxel_z(x,y,z,delay);
             delay_ms(wait);
-            loop--; // one down, loop-- to go. when this hits 0, the loop exits. 
+            loop--; // one down, loop-- to go. when this hits 0, the loop exits.
         }
     }
 }
@@ -252,7 +252,7 @@ void sendvoxels_rand_z (int iterations, int delay, int wait)
                 sendvoxel_z(x,y,7,delay);
             }
             delay_ms(wait);
-            
+
             // Remember the last move
             last_y = y;
             last_x = x;
@@ -284,18 +284,18 @@ void boingboing(uint16_t iterations, int delay, unsigned char mode, unsigned cha
         snake[i][1] = y;
         snake[i][2] = z;
     }
-    
-    
+
+
     dx = 1;
     dy = 1;
     dz = 1;
-    
+
     while(iterations)
     {
         crash_x = 0;
         crash_y = 0;
         crash_z = 0;
-    
+
 
         // Let's mix things up a little:
         if (rand()%3 == 0)
@@ -304,10 +304,10 @@ void boingboing(uint16_t iterations, int delay, unsigned char mode, unsigned cha
             lol = rand()%3;
             if (lol == 0)
                 dx = rand()%3 - 1;
-            
+
             if (lol == 1)
                 dy = rand()%3 - 1;
-                
+
             if (lol == 2)
                 dz = rand()%3 - 1;
         }
@@ -325,7 +325,7 @@ void boingboing(uint16_t iterations, int delay, unsigned char mode, unsigned cha
                 dx = 0;
             }
         }
-        
+
         // y axis 0 crash
         if (dy == -1 && y == 0)
         {
@@ -338,7 +338,7 @@ void boingboing(uint16_t iterations, int delay, unsigned char mode, unsigned cha
                 dy = 0;
             }
         }
-        
+
         // z axis 0 crash
         if (dz == -1 && z == 0)
         {
@@ -351,7 +351,7 @@ void boingboing(uint16_t iterations, int delay, unsigned char mode, unsigned cha
                 dz = 0;
             }
         }
-        
+
         // x axis 7 crash
         if (dx == 1 && x == 7)
         {
@@ -364,7 +364,7 @@ void boingboing(uint16_t iterations, int delay, unsigned char mode, unsigned cha
                 dx = 0;
             }
         }
-        
+
         // y axis 7 crash
         if (dy == 1 && y == 7)
         {
@@ -377,7 +377,7 @@ void boingboing(uint16_t iterations, int delay, unsigned char mode, unsigned cha
                 dy = 0;
             }
         }
-        
+
         // z azis 7 crash
         if (dz == 1 && z == 7)
         {
@@ -390,7 +390,7 @@ void boingboing(uint16_t iterations, int delay, unsigned char mode, unsigned cha
                 dz = 0;
             }
         }
-        
+
         // mode bit 0 sets crash action enable
         if (mode | 0x01)
         {
@@ -432,10 +432,10 @@ void boingboing(uint16_t iterations, int delay, unsigned char mode, unsigned cha
                         {
                             dz = 1;
                         }
-                    }   
+                    }
                 }
             }
-            
+
             if (crash_y)
             {
                 if (dx == 0)
@@ -474,10 +474,10 @@ void boingboing(uint16_t iterations, int delay, unsigned char mode, unsigned cha
                         {
                             dz = 1;
                         }
-                    }   
+                    }
                 }
             }
-            
+
             if (crash_z)
             {
                 if (dy == 0)
@@ -497,7 +497,7 @@ void boingboing(uint16_t iterations, int delay, unsigned char mode, unsigned cha
                         {
                             dy = 1;
                         }
-                    }   
+                    }
                 }
                 if (dx == 0)
                 {
@@ -516,11 +516,11 @@ void boingboing(uint16_t iterations, int delay, unsigned char mode, unsigned cha
                         {
                             dx = 1;
                         }
-                    }   
+                    }
                 }
             }
         }
-        
+
         // mode bit 1 sets corner avoid enable
         if (mode | 0x02)
         {
@@ -539,16 +539,16 @@ void boingboing(uint16_t iterations, int delay, unsigned char mode, unsigned cha
                 // back and forth between this corner,
                 // and the exact opposite corner
                 // We don't want that!
-            
+
                 // So we alter the trajectory a bit,
                 // to avoid corner stickyness
                 lol = rand()%3;
                 if (lol == 0)
                     dx = 0;
-                
+
                 if (lol == 1)
                     dy = 0;
-                    
+
                 if (lol == 2)
                     dz = 0;
             }
@@ -557,33 +557,33 @@ void boingboing(uint16_t iterations, int delay, unsigned char mode, unsigned cha
         // one last sanity check
         if (x == 0 && dx == -1)
             dx = 1;
-    
+
         if (y == 0 && dy == -1)
             dy = 1;
-    
+
         if (z == 0 && dz == -1)
             dz = 1;
-    
+
         if (x == 7 && dx == 1)
             dx = -1;
-    
+
         if (y == 7 && dy == 1)
             dy = -1;
-    
+
         if (z == 7 && dz == 1)
             dz = -1;
-    
-    
+
+
         // Finally, move the voxel.
         x = x + dx;
         y = y + dy;
         z = z + dz;
-        
+
         if (drawmode == 0x01) // show one voxel at time
         {
             setvoxel(x,y,z);
             delay_ms(delay);
-            clrvoxel(x,y,z);    
+            clrvoxel(x,y,z);
         } else if (drawmode == 0x02) // flip the voxel in question
         {
             flpvoxel(x,y,z);
@@ -599,7 +599,7 @@ void boingboing(uint16_t iterations, int delay, unsigned char mode, unsigned cha
             snake[0][0] = x;
             snake[0][1] = y;
             snake[0][2] = z;
-                
+
             for (i=0;i<8;i++)
             {
                 setvoxel(snake[i][0],snake[i][1],snake[i][2]);
@@ -610,8 +610,8 @@ void boingboing(uint16_t iterations, int delay, unsigned char mode, unsigned cha
                 clrvoxel(snake[i][0],snake[i][1],snake[i][2]);
             }
         }
-        
-    
+
+
         iterations--;
     }
 }
@@ -621,8 +621,8 @@ void effect_random_filler (int delay, int state)
 {
     int x,y,z;
     int loop = 0;
-    
-    
+
+
     if (state == 1)
     {
         fill(0x00);
@@ -630,7 +630,7 @@ void effect_random_filler (int delay, int state)
     {
         fill(0xff);
     }
-    
+
     while (loop<511)
     {
         x = rand()%8;
@@ -642,7 +642,7 @@ void effect_random_filler (int delay, int state)
             altervoxel(x,y,z,state);
             delay_ms(delay);
             loop++;
-        }   
+        }
     }
 }
 
@@ -653,18 +653,18 @@ void effect_rain (int iterations)
     int rnd_x;
     int rnd_y;
     int rnd_num;
-    
+
     for (ii=0;ii<iterations;ii++)
     {
         rnd_num = rand()%4;
-        
+
         for (i=0; i < rnd_num;i++)
         {
             rnd_x = rand()%8;
             rnd_y = rand()%8;
             setvoxel(rnd_x,rnd_y,7);
         }
-        
+
         delay_ms(1000);
         shift(AXIS_Z,-1);
     }
@@ -676,7 +676,7 @@ void effect_z_updown (int iterations, int delay)
     unsigned char destinations[64];
 
     int i,y,move;
-    
+
     for (i=0; i<64; i++)
     {
         positions[i] = 4;
@@ -688,7 +688,7 @@ void effect_z_updown (int iterations, int delay)
         effect_z_updown_move(positions, destinations, AXIS_Z);
         delay_ms(delay);
     }
-    
+
     for (i=0;i<iterations;i++)
     {
         for (move=0;move<8;move++)
@@ -704,7 +704,7 @@ void effect_z_updown (int iterations, int delay)
         {
                 destinations[rand()%64] = rand()%8;
         }
-        
+
     }
 
 }
@@ -723,7 +723,7 @@ void effect_z_updown_move (unsigned char positions[64], unsigned char destinatio
             positions[px]--;
         }
     }
-        
+
     draw_positions_axis (AXIS_Z, positions,0);
 }
 
@@ -733,7 +733,7 @@ void effect_axis_updown_randsuspend (char axis, int delay, int sleep, int invert
     unsigned char destinations[64];
 
     int i,px;
-    
+
     // Set 64 random positions
     for (i=0; i<64; i++)
     {
@@ -756,16 +756,16 @@ void effect_axis_updown_randsuspend (char axis, int delay, int sleep, int invert
         draw_positions_axis (axis, positions,invert);
         delay_ms(delay);
     }
-    
+
     // Set all destinations to 7 (opposite from the side they started out)
     for (i=0; i<64; i++)
     {
         destinations[i] = 7;
     }
-    
+
     // Suspend the positions in mid-air for a while
     delay_ms(sleep);
-    
+
     // Then do the same thing one more time
     for (i=0; i<8; i++)
     {
@@ -788,9 +788,9 @@ void effect_axis_updown_randsuspend (char axis, int delay, int sleep, int invert
 void draw_positions_axis (char axis, unsigned char positions[64], int invert)
 {
     int x, y, p;
-    
+
     fill(0x00);
-    
+
     for (x=0; x<8; x++)
     {
         for (y=0; y<8; y++)
@@ -802,18 +802,18 @@ void draw_positions_axis (char axis, unsigned char positions[64], int invert)
             {
                 p = positions[(x*8)+y];
             }
-        
+
             if (axis == AXIS_Z)
                 setvoxel(x,y,p);
-                
+
             if (axis == AXIS_Y)
                 setvoxel(x,p,y);
-                
+
             if (axis == AXIS_X)
                 setvoxel(p,y,x);
         }
     }
-    
+
 }
 
 
@@ -826,12 +826,12 @@ void effect_boxside_randsend_parallel (char axis, int origin, int delay, int mod
     int notdone = 1;
     int notdone2 = 1;
     int sent = 0;
-    
+
     for (i=0;i<64;i++)
     {
         pos[i] = 0;
     }
-    
+
     while (notdone)
     {
         if (mode == 1)
@@ -855,7 +855,7 @@ void effect_boxside_randsend_parallel (char axis, int origin, int delay, int mod
                 sent++;
             }
         }
-        
+
         done = 0;
         for (i=0;i<64;i++)
         {
@@ -863,14 +863,14 @@ void effect_boxside_randsend_parallel (char axis, int origin, int delay, int mod
             {
                 pos[i] += 1;
             }
-                
+
             if (pos[i] == 7)
                 done++;
         }
-        
+
         if (done == 64)
             notdone = 0;
-        
+
         for (i=0;i<64;i++)
         {
             if (origin == 0)
@@ -881,13 +881,13 @@ void effect_boxside_randsend_parallel (char axis, int origin, int delay, int mod
                 cubepos[i] = (7-pos[i]);
             }
         }
-        
-        
+
+
         delay_ms(delay);
         draw_positions_axis(axis,cubepos,0);
         LED_PORT ^= LED_RED;
     }
-    
+
 }
 
 
@@ -898,24 +898,24 @@ void effect_boxside_randsend_parallel (char axis, int origin, int delay, int mod
 void effect_loadbar(int delay)
 {
     fill(0x00);
-    
+
     int z,y;
-    
+
     for (z=0;z<8;z++)
     {
         for (y=0;y<8;y++)
             cube[z][y] = 0xff;
-            
+
         delay_ms(delay);
     }
-    
+
     delay_ms(delay*3);
-    
+
     for (z=0;z<8;z++)
     {
         for (y=0;y<8;y++)
             cube[z][y] = 0x00;
-            
+
         delay_ms(delay);
     }
 }
@@ -930,7 +930,7 @@ void effect_random_sparkle_flash (int iterations, int voxels, int delay)
     {
         for (v=0;v<=voxels;v++)
             setvoxel(rand()%8,rand()%8,rand()%8);
-            
+
         delay_ms(delay);
         fill(0x00);
     }
@@ -941,17 +941,17 @@ void effect_random_sparkle_flash (int iterations, int voxels, int delay)
 void effect_random_sparkle (void)
 {
     int i;
-    
+
     for (i=1;i<20;i++)
     {
         effect_random_sparkle_flash(5,i,200);
     }
-    
+
     for (i=20;i>=1;i--)
     {
         effect_random_sparkle_flash(5,i,200);
     }
-    
+
 }
 
 int effect_telcstairs_do(int x, int val, int delay)
@@ -994,28 +994,28 @@ void effect_wormsqueeze (int size, int axis, int direction, int iterations, int 
     int x, y, i,j,k, dx, dy;
     int cube_size;
     int origin = 0;
-    
+
     if (direction == -1)
         origin = 7;
-    
+
     cube_size = 8-(size-1);
-    
+
     x = rand()%cube_size;
     y = rand()%cube_size;
-    
+
     for (i=0; i<iterations; i++)
     {
         dx = ((rand()%3)-1);
         dy = ((rand()%3)-1);
-    
+
         if ((x+dx) > 0 && (x+dx) < cube_size)
             x += dx;
-            
+
         if ((y+dy) > 0 && (y+dy) < cube_size)
             y += dy;
-    
+
         shift(axis, direction);
-        
+
 
         for (j=0; j<size;j++)
         {
@@ -1023,15 +1023,15 @@ void effect_wormsqueeze (int size, int axis, int direction, int iterations, int 
             {
                 if (axis == AXIS_Z)
                     setvoxel(x+j,y+k,origin);
-                    
+
                 if (axis == AXIS_Y)
                     setvoxel(x+j,origin,y+k);
-                    
+
                 if (axis == AXIS_X)
                     setvoxel(origin,y+j,x+k);
             }
         }
-        
+
         delay_ms(delay);
     }
 }
@@ -1185,12 +1185,12 @@ void effect_pathmove (unsigned char *path, int length)
 {
     int i,z;
     unsigned char state;
-    
+
     for (i=(length-1);i>=1;i--)
     {
         for (z=0;z<8;z++)
         {
-        
+
             state = getvoxel(((path[(i-1)]>>4) & 0x0f), (path[(i-1)] & 0x0f), z);
             altervoxel(((path[i]>>4) & 0x0f), (path[i] & 0x0f), z, state);
         }
@@ -1204,20 +1204,20 @@ void effect_rand_patharound (int iterations, int delay)
     int z, dz, i;
     z = 4;
     unsigned char path[28];
-    
+
     font_getpath(0,path,28);
-    
+
     for (i = 0; i < iterations; i++)
     {
         dz = ((rand()%3)-1);
         z += dz;
-        
+
         if (z>7)
             z = 7;
-            
+
         if (z<0)
             z = 0;
-        
+
         effect_pathmove(path, 28);
         setvoxel(0,7,z);
         delay_ms(delay);
@@ -1229,15 +1229,15 @@ void effect_pathspiral (int iterations, int delay)
     int z, i;
     z = 4;
     unsigned char path[16];
-    
+
     font_getpath(1,path,16);
-    
+
     for (i = 0; i < iterations; i++)
     {
         setvoxel(4,0,i%8);
         delay_ms(delay);
         effect_pathmove(path, 28);
-        
+
     }
 }
 
@@ -1247,22 +1247,22 @@ void effect_path_text (int delay, char *str)
     z = 4;
     unsigned char path[28];
     font_getpath(0,path,28);
-    
+
     unsigned char chr[5];
     unsigned char stripe;
-    
+
     while (*str)
     {
         //charfly(*str++, direction, axis, mode, delay);
-        
-        
+
+
         font_getchar(*str++, chr);
-        
+
         for (ii=0;ii<5;ii++)
         {
             //stripe = pgm_read_byte(&font[(chr*5)+ii]);
             stripe = chr[ii];
-            
+
             for (z=0;z<8;z++)
             {
                 if ((stripe>>(7-z)) & 0x01)
@@ -1272,12 +1272,12 @@ void effect_path_text (int delay, char *str)
                 {
                     clrvoxel(0,7,z);
                 }
-                
+
             }
             effect_pathmove(path, 28);
             delay_ms(delay);
         }
-    
+
         effect_pathmove(path, 28);
         delay_ms(delay);
     }
@@ -1294,11 +1294,11 @@ void effect_path_bitmap (int delay, char bitmap, int iterations)
     z = 4;
     unsigned char path[28];
     font_getpath(0,path,28);
-    
+
     for (i=0; i < iterations; i++)
-    {   
+    {
         for (ii=0;ii<8;ii++)
-        {       
+        {
             for (z=0;z<8;z++)
             {
                 if (font_getbitmappixel(bitmap,(7-z),ii))
@@ -1308,12 +1308,12 @@ void effect_path_bitmap (int delay, char bitmap, int iterations)
                 {
                     clrvoxel(0,7,z);
                 }
-                
+
             }
             delay_ms(delay);
             effect_pathmove(path, 28);
         }
-    
+
         for (ii=0;ii<20;ii++)
         {
             delay_ms(delay);
